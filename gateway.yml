@@ -1,5 +1,6 @@
 server:
-  port: ${PORT:${SERVER_PORT:8080}}
+  #  port: ${PORT:${SERVER_PORT:8080}}
+  port: ${PORT:8081}
 
 spring:
   application:
@@ -10,23 +11,28 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: api-catalog
-          uri: lb://api-catalog
-          predicates:
-            - Path=/api/v1/catalog/**
-        - id: api-movie
+        - id: msmovie
           uri: lb://api-movie
           predicates:
             - Path=/api/v1/movies/**
+        - id: mscatalog
+          uri: lb://api-catalog
+          predicates:
+            - Path=/api/v1/catalog/**
+          filters:
+            - StripPrefix=3
 
 info:
   app:
     name: ${spring.application.name}
 
 eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     registerWithEureka: false
-    fetchRegistry: false
+    fetchRegistry: true
     serviceURL:
       defaultZone: http://localhost:8761/eureka
 management:
