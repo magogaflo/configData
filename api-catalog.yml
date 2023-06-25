@@ -3,23 +3,26 @@ server:
 spring:
   application:
     name: api-catalog
-  datasource:
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/movie-dev
-    username: root
-    password: admin
-  jpa:
-    hibernate.ddl-auto: update
-    generate-ddl: true
-    show-sql: true
+  mongodb:
+    embedded:
+      version: 4.0.2
+  data:
+    mongodb:
+      database: test-catalog
+      port: 27018
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+  zipkin:
+    baseUrl: http://localhost:9411/
 
 info:
   application:
-    name: api-catalog
+     name: api-catalog
 
 eureka:
-  healthcheck:
-    enabled: true
   instance:
     hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -28,36 +31,38 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-  resilience4j:
-    retry:
-      configs:
-        default:
-          max-retry-attempts: 3
-          wait-duration: 1s
-          retry-exceptions:
-            - java.io.IOException
-            - java.net.SocketTimeoutException
-        instances:
-          retryInscription:
-            base-config: default
-            max-retry-attempts: 5
-            wait-duration: 2s
-            retry-exceptions:
-              - java.net.ConnectException
-    circuitbreaker:
-      configs:
-        default:
-          register-health-indicator: true
-          sliding-window-size: 10
-          minimum-number-of-calls: 5
-          permitted-number-of-calls-in-half-open-state: 3
-          wait-duration-in-open-state: 30s
-          automatic-transition-from-open-to-half-open-enabled: true
-          failure-rate-threshold: 50
-      instances:
-        showCatalog:
-          base-config: default
-          sliding-window-type: COUNT_BASED
-          sliding-window-size: 5
-          wait-duration-in-open-state: 1m
-          failure-rate-threshold: 40
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-retry-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          
+java.io.IOException
+java.net.SocketTimeoutException
+  instances:
+    retryCatalog:
+      base-config: default
+      max-retry-attempts: 5
+      wait-duration: 2s
+      retry-exceptions:
+java.net.ConnectException
+circuitbreaker:
+  configs:
+    default:
+      register-health-indicator: true
+      sliding-window-size: 10
+      minimum-number-of-calls: 5
+      permitted-number-of-calls-in-half-open-state: 3
+      wait-duration-in-open-state: 30s
+      automatic-transition-from-open-to-half-open-enabled: true
+      failure-rate-threshold: 50
+  instances:
+    clientCatalog:
+      base-config: default
+      sliding-window-type: COUNT_BASED
+      sliding-window-size: 5
+      wait-duration-in-open-state: 1m
+      failure-rate-threshold: 20
