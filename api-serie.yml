@@ -4,14 +4,19 @@ server:
 spring:
   application:
     name: api-serie
-  mongodb:
-    embedded:
-      version: 4.0.2
   data:
     mongodb:
       database: series-dev
       port: 27017
       #host: localhost
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+    
+  zipkin:
+    baseUrl: http://localhost:9411/
 info:
   application:
     name: api-serie
