@@ -12,7 +12,7 @@ spring:
   data:
     mongodb:
       database: test
-      port: 27017
+      port: 27018
       #host: localhost
 info:
   application:
