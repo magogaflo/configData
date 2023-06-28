@@ -16,7 +16,7 @@ spring:
       version: 4.0.2
   data:
     mongodb:
-      database: series-dev
+      database: test
       port: 27017
       #host: localhost
 info:
